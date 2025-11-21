@@ -15,9 +15,9 @@ O objetivo é aplicar:
 - Métricas adequadas para cada tipo de modelo
 - Validação cruzada e tuning (GridSearch / RandomSearch / PyCaret)
 
-Dataset escolhido: **Wine Quality (Vinho Tinto)**  
+Dataset escolhido: **Wine Quality (Vinho Tinto e Branco)**  
 Fonte: UCI Machine Learning Repository  
-Link: https://archive.ics.uci.edu  
+Link: https://archive.ics.uci.edu/dataset/186/wine+quality
 Licença: Creative Commons (CC BY 4.0)
 
 ---
