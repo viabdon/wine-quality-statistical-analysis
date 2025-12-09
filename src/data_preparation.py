@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
 
 
@@ -162,11 +163,10 @@ def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
     return X_train, X_val, X_test, y_train, y_val, y_test
 
 
-def get_baseline(y_train, y_val, y_test):
+def get_baseline(y_train, y_test):
     """
     ## Args:
-        `y_train`: pd.DataFrame 
-        `y_val`: pd.DataFrame 
+        `y_train`: pd.DataFrame  
         `y_test`: pd.DataFrame 
         
     ## Description:
@@ -174,7 +174,6 @@ def get_baseline(y_train, y_val, y_test):
     ## Returns:
         `baseline_metrics`: dict
     """
-    from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
         
     baseline_pred = np.full(len(y_test), y_train.mean())
 
