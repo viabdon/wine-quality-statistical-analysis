@@ -65,37 +65,33 @@ def prepare_features_red(df):
     ## Returns:
         `X`: pd.DataFrame, `y`: pd.DataFrame
     """
-
     df_red = df[df["type"] == "red"].copy()
 
-    # Removendo as colunas redundantes identificadas na EDA
+    # Drops baseados na sua EDA (Multicolinearidade)
     features_to_drop = [
-        "citric acid",  # Correlação forte com fixed acidity
-        "pH",  # Correlação forte negativa com acidez
-        "free sulfur dioxide",  # Manter apenas total sulfur dioxide
-        "type",  # Não é numérica
+        "citric acid",
+        "pH",
+        "free sulfur dioxide",
+        "type",
+        "quality",
+        "residual sugar",
+        "chlorides",
+        "sulphates",
     ]
 
-    # Usaremos apenas as versões log das variáveis transformadas, então removemos as originais
-    X = df_red.drop(
-        columns=features_to_drop
-        + ["quality", "residual sugar", "chlorides", "sulphates"]
-    )
+    # Garante que só remove o que existe
+    cols_to_drop = [c for c in features_to_drop if c in df_red.columns]
+    X = df_red.drop(columns=cols_to_drop)
 
-    # Adicionndo versões log
-    if "residual sugar log" in df_red.columns:
-        X["residual sugar log"] = df_red["residual sugar log"]
-        X["chlorides log"] = df_red["chlorides log"]
-        X["sulphates log"] = df_red["sulphates log"]
+    # Nota: As colunas " log" já foram criadas pelo apply_log_transforms
+    # e permanecerão no dataset pois não estão na lista de drop.
 
-    # Separando a variável alvo
     y = df_red["quality"]
-
     return X, y
 
 
 def prepare_features_white(df):
-    """    
+    """
     ## Args:
         pd.DataFrame
 
@@ -105,50 +101,42 @@ def prepare_features_white(df):
     ## Returns:
         `X`: pd.DataFrame, `y`: pd.DataFrame
     """
-    
     df_white = df[df["type"] == "white"].copy()
 
-    # Removendo densidade (redundante com álcool e açúcar)
+    # Drops específicos do vinho branco
     features_to_drop = [
-        "density",  # Função de álcool e açúcar
-        "free sulfur dioxide",  # Manter apenas total
-        "type" # Não é numérica,
+        "density",
+        "free sulfur dioxide",
+        "type",
+        "quality",
+        "residual sugar",
+        "chlorides",
+        "sulphates",
     ]
 
-     # Mesma lógica aplicada para o vinho tinto
-    X = df_white.drop(
-        columns=features_to_drop
-        + ["quality", "residual sugar", "chlorides", "sulphates"]
-    )
+    cols_to_drop = [c for c in features_to_drop if c in df_white.columns]
+    X = df_white.drop(columns=cols_to_drop)
 
-    # Mesma lógica aplicada para o vinho tinto
-    if "residual sugar_log" in df_white.columns:
-        X["residual sugar_log"] = df_white["residual sugar_log"]
-        X["chlorides_log"] = df_white["chlorides_log"]
-        X["sulphates_log"] = df_white["sulphates_log"]
-
-    # Separando a variável alvo
     y = df_white["quality"]
-
     return X, y
 
 
 def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
     """
     ## Args:
-        `X`: pd.DataFrame 
+        `X`: pd.DataFrame
         *Features*
-        `y`: pd.DataFrame 
+        `y`: pd.DataFrame
         *Target*
-        
+
     ## Description:
         Divide dados em treino/validação/teste
-    
+
     ## Returns:
-        `X_train`, `X_val`, `X_test`, `y_train`, `y_val`, `y_test` 
-        *Dataframes de teste e de treino*    
+        `X_train`, `X_val`, `X_test`, `y_train`, `y_val`, `y_test`
+        *Dataframes de teste e de treino*
     """
-    
+
     # Primeiro split: treino+val vs teste
     X_temp, X_test, y_temp, y_test = train_test_split(
         X, y, test_size=test_size, random_state=random_state
@@ -166,15 +154,16 @@ def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
 def get_baseline(y_train, y_test):
     """
     ## Args:
-        `y_train`: pd.DataFrame  
-        `y_test`: pd.DataFrame 
-        
+        `y_train`: pd.DataFrame
+        `y_test`: pd.DataFrame
+
+
     ## Description:
         Calcula baseline usando média de treino
     ## Returns:
         `baseline_metrics`: dict
     """
-        
+
     baseline_pred = np.full(len(y_test), y_train.mean())
 
     baseline_metrics = {
