@@ -4,5 +4,4 @@ seaborn
 matplotlib
 scikit-learn
 statsmodels
-pycaret
 jupyter
