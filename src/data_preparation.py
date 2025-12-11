@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 
 def load_data():
@@ -174,6 +175,13 @@ def get_baseline(y_train, y_test):
     }
 
     return baseline_metrics
+
+def get_baseline_classification(y_train, y_test):
+    """Retorna accuracy de sempre prever a classe majoritária"""
+    most_common = y_train.mode()[0]
+    baseline_pred = np.full(len(y_test), most_common)
+    baseline_acc = accuracy_score(y_test, baseline_pred)
+    return baseline_acc, most_common
 
 
 if __name__ == "__main__":
